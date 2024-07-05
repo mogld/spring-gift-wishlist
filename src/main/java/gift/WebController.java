@@ -30,6 +30,16 @@ public class WebController {
         return "login";
     }
 
+    @GetMapping("/user-wishes")
+    public String showWishesPage() {
+        return "user-wishes";
+    }
+
+    @GetMapping("/user-products")
+    public String showUserProductsPage() {
+        return "user-products";
+    }
+
     @Autowired
     private ProductController productController;
 

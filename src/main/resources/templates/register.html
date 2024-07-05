@@ -41,7 +41,9 @@
                 if (response.ok) {
                     alert('User registered successfully');
                 } else {
-                    alert('Error registering user');
+                    response.text().then(text => {
+                        alert('Error: ' + text);
+                    });
                 }
             })
             .catch(error => {
