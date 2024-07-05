@@ -1,48 +1,79 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Products</title>
+    <title>Product List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .table-responsive {
+            flex-grow: 1;
+        }
+        .thead-dark th {
+            text-align: center;
+        }
+        .table td, .table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table td img {
+            max-width: 100%;
+            height: auto;
+        }
+        .break-word {
+            word-wrap: break-word;
+            word-break: break-all;
+            white-space: normal;
+        }
+        .font-weight-bold {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-4">Products</h1>
-    <div id="product-list"></div>
+    <h1 class="mt-4">상품 목록</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th style="width: 20%;">Name</th>
+                <th style="width: 15%;">Price</th>
+                <th style="width: 30%;">Image URL</th>
+                <th style="width: 15%;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td class="font-weight-bold" th:text="${product.name}"></td>
+                <td th:text="${product.price}"></td>
+                <td class="break-word" th:text="${product.imageUrl}"></td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="addToWishList([[${product.id}]])">Add to Wish List</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    const token = localStorage.getItem('jwtToken');
-
-    fetch('/api/products', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(products => {
-            const productList = document.getElementById('product-list');
-            products.forEach(product => {
-                const productDiv = document.createElement('div');
-                productDiv.innerHTML = `
-                <h2>${product.name}</h2>
-                <p>${product.price}</p>
-                <img src="${product.imageUrl}" alt="${product.name}" style="width: 100px; height: 100px;"/>
-                <button onclick="addToWishList(${product.id})">Add to Wish List</button>
-            `;
-                productList.appendChild(productDiv);
-            });
-        });
-
     function addToWishList(productId) {
+        const token = localStorage.getItem('jwtToken');
         fetch('/wishes', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ productId: productId })
+            body: JSON.stringify(productId)
         })
             .then(response => {
                 if (response.ok) {

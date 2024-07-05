@@ -36,7 +36,12 @@ public class WebController {
     }
 
     @GetMapping("/user-products")
-    public String showUserProductsPage() {
+    public String showUserProductsPage(Model model) {
+        ResponseEntity<List<Product>> response = productController.getAllProducts();
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+            return "error/500";
+        }
+        model.addAttribute("products", response.getBody());
         return "user-products";
     }
 

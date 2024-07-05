@@ -3,99 +3,56 @@
 <head>
     <title>Wish List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-        }
-        .container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .table-responsive {
-            flex-grow: 1;
-        }
-        .thead-dark th {
-            text-align: center;
-        }
-        .table td, .table th {
-            vertical-align: middle;
-            text-align: center;
-        }
-        .table td img {
-            max-width: 100%;
-            height: auto;
-        }
-        .break-word {
-            word-wrap: break-word;
-            word-break: break-all;
-            white-space: normal;
-        }
-        .font-weight-bold {
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
     <h1 class="mt-4">위시 리스트</h1>
-    <div id="wishesList"></div>
+    <div id="wish-list"></div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            alert('You must be logged in to view this page');
-            window.location.href = "/login";
-            return;
-        }
 
         fetch('/wishes', {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + token
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
             }
         })
             .then(response => response.json())
             .then(wishes => {
-                const wishesList = document.getElementById('wishesList');
+                const wishList = document.getElementById('wish-list');
                 wishes.forEach(wish => {
-                    const wishElement = document.createElement('div');
-                    wishElement.classList.add('card', 'mb-3');
-                    wishElement.innerHTML = `
-                        <div class="card-body">
-                            <h5 class="card-title">${wish.product.name}</h5>
-                            <p class="card-text">Price: ${wish.product.price}</p>
-                            <button class="btn btn-danger" onclick="removeWish(${wish.id})">Remove</button>
-                        </div>
-                    `;
-                    wishesList.appendChild(wishElement);
+                    const wishDiv = document.createElement('div');
+                    wishDiv.innerHTML = `
+                    <h2>${wish.product.name}</h2>
+                    <p>${wish.product.price}</p>
+                    <img src="${wish.product.imageUrl}" alt="${wish.product.name}" style="width: 100px; height: 100px;"/>
+                    <button onclick="removeFromWishList(${wish.id})">Remove from Wish List</button>
+                `;
+                    wishList.appendChild(wishDiv);
                 });
-            })
-            .catch(error => {
-                alert('Failed to load wishes');
             });
     });
 
-    function removeWish(wishId) {
+    function removeFromWishList(wishId) {
         const token = localStorage.getItem('jwtToken');
-        fetch(`/wishes/${wishId}`, {
+        fetch('/wishes/' + wishId, {
             method: 'DELETE',
             headers: {
-                'Authorization': 'Bearer ' + token
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
             }
         })
             .then(response => {
                 if (response.ok) {
+                    alert('Product removed from wish list!');
                     location.reload();
                 } else {
-                    throw new Error('Failed to remove wish');
+                    alert('Failed to remove product from wish list.');
                 }
-            })
-            .catch(error => {
-                alert(error.message);
             });
     }
 </script>
