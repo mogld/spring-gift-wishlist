@@ -8,8 +8,3 @@ INSERT INTO member (email, password) VALUES ('user2@example.com', 'password2');
 
 
 INSERT INTO wish (member_id, product_id) VALUES ((SELECT id FROM member WHERE email = 'user1@example.com'), (SELECT id FROM product WHERE name = '신라면'));
-
-
-
-
-
