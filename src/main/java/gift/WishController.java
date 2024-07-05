@@ -21,9 +21,9 @@ public class WishController {
     }
 
     @PostMapping
-    public Wish addWish(@RequestBody Long productId, @LoginMember Member member) {
+    public Wish addWish(@RequestBody WishRequest wishRequest, @LoginMember Member member) {
         // Add logic to find product by productId
-        Product product = productService.findById(productId);
+        Product product = productService.findById(wishRequest.getProductId());
         return wishService.addWish(member, product);
     }
 
