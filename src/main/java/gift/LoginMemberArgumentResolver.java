@@ -1,5 +1,6 @@
 package gift;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String token = webRequest.getHeader("Authorization").substring(7);
+        Claims claims = jwtTokenUtil.getClaims(token);
         Long memberId = Long.parseLong(jwtTokenUtil.getClaims(token).getSubject());
         return memberService.findById(memberId);
     }
