@@ -5,9 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
-
 @RestController
 @RequestMapping("/members")
 public class MemberController {
@@ -16,16 +13,9 @@ public class MemberController {
     private MemberService memberService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody Member member, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
-        }
-        try {
-            memberService.register(member.getEmail(), member.getPassword());
-            return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> register(@RequestBody Member member) {
+        Member newMember = memberService.register(member.getEmail(), member.getPassword());
+        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
     }
 
     @PostMapping("/login")
